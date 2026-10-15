@@ -6,7 +6,7 @@
 <body class="t-h"><header class="nav"><a class="brand" href="../../index.html">Tirth Sadaria</a><nav><a href="../../hardware/index.html#work">← All hardware work</a><a href="../../hardware/index.html#contact">Contact</a></nav></header>
 <main class="p-main"><article>
 <p class="eyebrow">Smart materials · Simulation</p><h1>Piezoelectric Energy Harvesting</h1><p class="lede">Finite-element models of PZT harvesters built into a wheel, and a digital-twin plan to estimate harvestable power from a robot&#x27;s suspension.</p>
-<p class="p-meta">Sep – Dec 2025 · Smart Materials Lab, University of Maryland</p>
+<p class="p-meta">Sep – Dec 2025 · Smart Materials &amp; Structures Research Center, University of Maryland</p>
 <ul class="metrics big"><li><b class="num">PZT 1.0, 2.0, wheel</b><span>Models</span></li><li><b class="num">ANSYS + COMSOL</b><span>Solvers</span></li><li><b class="num">Isaac Sim twin</b><span>Next</span></li></ul>
 <section class="p-sec"><h2>Problem</h2><p>Estimate how much energy piezoelectric stacks could recover from wheel and suspension loads before building hardware.</p></section>
 <section class="p-sec"><h2>Approach</h2><ol class="steps"><li>Built coupled piezoelectric models in ANSYS (two design iterations), then a PZT wheel model in ANSYS and COMSOL.</li><li>Planned a digital twin in NVIDIA Isaac Sim: a Husky UGV over KITTI terrain at 400 Hz, logging suspension joint forces.</li><li>Defined the post-processing: open-circuit voltage from the d33 constitutive model for PZT-5A, and power into a matched load.</li></ol></section>

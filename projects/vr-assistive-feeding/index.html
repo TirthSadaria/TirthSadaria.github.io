@@ -9,7 +9,7 @@
 <p class="p-meta">Fall 2025 · Team of 3 with Amogha Thalihalla Sunil and Shreya Kalyanaraman · ENPM645</p>
 <ul class="metrics big"><li><b class="num">Quest 2</b><span>Headset</span></li><li><b class="num">6-DOF</b><span>Tracking</span></li><li><b class="num">Assistive Gym</b><span>Simulator</span></li></ul>
 <section class="p-sec"><h2>Problem</h2><p>Feeding-assist policies are trained against simulated people who sit still. Real users lean and turn their heads.</p></section>
-<section class="p-sec"><h2>Approach</h2><ol class="steps"><li>Integrated an Oculus Quest 2 with SteamVR and PyBullet (Assistive Gym).</li><li>Mapped 6-DOF head and controller tracking onto the simulated person in real time.</li><li>Built fail-safes that freeze the simulation when tracking becomes erratic.</li></ol></section>
+<section class="p-sec"><h2>Approach</h2><ol class="steps"><li>Integrated an Oculus Quest 2 with SteamVR and PyBullet (Assistive Gym).</li><li>Mapped 6-DOF head and controller tracking onto the simulated person in real time.</li><li>Built fail-safes that freeze the simulation when tracking becomes erratic.</li><li>As a team, evaluated pretrained feeding policies with a VR participant in the loop, with a data-capture and metrics pipeline.</li></ol></section>
 <section class="p-sec"><h2>Results</h2><ul class="results"><li>Policies trained on static humans failed once the user leaned or rotated, which shows the need for human motion during training and evaluation.</li></ul></section>
 
 <section class="p-sec"><h2>Tools</h2><ul class="tags"><li>Oculus Quest 2</li><li>SteamVR</li><li>PyBullet</li><li>Assistive Gym</li><li>Python</li></ul><p class="credit">Built on the open-source Assistive Gym and Assistive VR Gym projects.</p></section>
