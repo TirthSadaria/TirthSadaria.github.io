@@ -223,3 +223,8 @@ h1,h2,h3,h4{font-family:var(--head);line-height:1.1;margin:0}
 .half-r::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(7,11,15,.9) 0%,rgba(7,11,15,.4) 35%,transparent 60%)}
 .half-h::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(0deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.5) 35%,transparent 60%)}
 @media (max-width:720px){.split-name{order:-1}}
+.split{grid-template-columns:3fr 2fr}
+@media (max-width:720px){.split{grid-template-columns:1fr}.half-r{min-height:56vh}.half-h{min-height:40vh}}
+
+.split-name{left:60%}
+@media (max-width:720px){.split-name{left:auto}.half-h{min-height:64vh}}
