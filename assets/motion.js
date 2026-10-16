@@ -28,3 +28,13 @@ function close(){b.classList.remove('open');seen(1)}
 b.querySelector('.bot-x').addEventListener('click',close);
 b.querySelector('.bot-fig').addEventListener('click',function(){b.classList.contains('open')?close():open()});
 if(!seen()){setTimeout(open,1800);setTimeout(function(){if(b.classList.contains('open'))close()},14000)}})();
+(function(){
+// card spotlight follows cursor
+document.querySelectorAll('.card').forEach(function(c){c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--mx',(e.clientX-r.left)+'px');c.style.setProperty('--my',(e.clientY-r.top)+'px')})});
+// hardware cards: show a drawing-style dimension on hover
+document.querySelectorAll('.t-h .card').forEach(function(c,i){c.dataset.dim='DWG-'+String(i+1).padStart(3,'0')+' · REV A'});
+// timelines draw in
+if('IntersectionObserver' in window){var o=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');o.unobserve(e.target)}})},{threshold:.15});document.querySelectorAll('.timeline').forEach(function(t){o.observe(t)})}else document.querySelectorAll('.timeline').forEach(function(t){t.classList.add('in')});
+// reading progress on project pages
+var rb=document.querySelector('.readbar');if(rb){var f=function(){var h=document.documentElement,max=h.scrollHeight-h.clientHeight;rb.style.transform='scaleX('+(max>0?h.scrollTop/max:0)+')'};addEventListener('scroll',f,{passive:true});f()}
+})();

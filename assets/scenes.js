@@ -6,8 +6,7 @@ function run(c,fn){var on=true,last=0;if('IntersectionObserver' in window)new In
  (function loop(t){var dt=Math.min((t-last)/1000,.05)*calm;last=t;if(on&&!document.hidden&&dt>0)fn(dt,t/1000*calm);requestAnimationFrame(loop)})(0)}
 
 /* ================= ROBOTICS: live rotating LiDAR with moving traffic ================= */
-var lc=document.getElementById('scan');
-if(lc){
+function lidarScene(lc){var opt=lc.dataset;
  var H=1.8,LAS=24,AZ=1080,EL=[],TAU=Math.PI*2;for(var l=0;l<LAS;l++)EL.push(Math.tan((-24+l*26/(LAS-1))*Math.PI/180));
  // actors: x,y,len,wid,h,vx,vy,color  (ego drives +x at 0; world scrolls)
  var actors=[
@@ -39,7 +38,7 @@ if(lc){
   var prev=sweep;sweep=(sweep+dt*TAU*.55)%TAU;var i1=Math.floor(prev/TAU*AZ),i2=Math.floor(sweep/TAU*AZ),n=(i2-i1+AZ)%AZ;for(var s=0;s<n;s++){var ci=(i1+s)%AZ;scanCol(ci);for(var q=0;q<LAS;q++)if(pts[ci*LAS+q])pts[ci*LAS+q].t=clock}
   cam+=dt*.18;
   x.clearRect(0,0,w,h);
-  var S=Math.min(w,h)*.042,cx=w*.52,cy=h*.46,pitch=.9+.12*Math.sin(clock*.2),cp=Math.cos(pitch),sp=Math.sin(pitch),cc=Math.cos(cam),sc=Math.sin(cam),f=40;
+  var S=Math.min(w,h)*.042,cx=w*(+opt.cx||.52),cy=h*(+opt.cy||.46),pitch=.9+.12*Math.sin(clock*.2),cp=Math.cos(pitch),sp=Math.sin(pitch),cc=Math.cos(cam),sc=Math.sin(cam),f=40;
   function P(px,py,pz){var rx=px*cc-py*sc,ry=px*sc+py*cc,yy=ry*cp-pz*sp,zz=ry*sp+pz*cp,k=f/(f+yy);return[cx+rx*S*k,cy-zz*S*k,k]}
   // lane lines scrolling
   x.lineWidth=1;var off=(clock*8)%6;[-7,0,7].forEach(function(ly){for(var lx=-36;lx<36;lx+=6){var a=P(lx-off,ly,0),b=P(lx-off+3,ly,0);x.strokeStyle='rgba(34,211,238,.18)';x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke()}});
@@ -52,21 +51,20 @@ if(lc){
    [0,a.h].forEach(function(z){x.beginPath();c.forEach(function(v,i){var p=P(v[0],v[1],z);i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])});x.closePath();x.stroke()});
    c.forEach(function(v){var p=P(v[0],v[1],0),q=P(v[0],v[1],a.h);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(q[0],q[1]);x.stroke()});
    var o=P(a.x,a.y,a.h+.3),e=P(a.x+a.vx*.35,a.y+a.vy*.35,a.h+.3);x.strokeStyle='#B6F23C';x.beginPath();x.moveTo(o[0],o[1]);x.lineTo(e[0],e[1]);x.stroke();
-   if(w>520){x.fillStyle='rgba(182,242,60,.9)';x.font='10px "JetBrains Mono",monospace';x.fillText(a.l<1?'PED '+Math.hypot(a.vx,a.vy).toFixed(1)+'m/s':'CAR_'+(ai+1)+' '+Math.abs(a.vx+8).toFixed(1)+'m/s',o[0]+4,o[1]-4)}});
+   if(w>520&&opt.hud!=='0'){x.fillStyle='rgba(182,242,60,.9)';x.font='10px "JetBrains Mono",monospace';x.fillText(a.l<1?'PED '+Math.hypot(a.vx,a.vy).toFixed(1)+'m/s':'CAR_'+(ai+1)+' '+Math.abs(a.vx+8).toFixed(1)+'m/s',o[0]+4,o[1]-4)}});
   // sweep wedge
   var bp=P(0,0,H);x.beginPath();x.moveTo(bp[0],bp[1]);for(var q2=0;q2<=12;q2++){var aa=sweep-.35*q2/12,e2=P(30*Math.cos(aa),30*Math.sin(aa),0);x.lineTo(e2[0],e2[1])}x.closePath();
   var gr=x.createRadialGradient(bp[0],bp[1],0,bp[0],bp[1],30*S);gr.addColorStop(0,'rgba(182,242,60,.28)');gr.addColorStop(1,'rgba(182,242,60,0)');x.fillStyle=gr;x.fill();
   // ego vehicle
   x.strokeStyle='#22D3EE';x.lineWidth=1.6;[0].forEach(function(z){x.beginPath();[[2.3,1],[-2.3,1],[-2.3,-1],[2.3,-1]].forEach(function(v,i){var p=P(v[0],v[1],z);i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1])});x.closePath();x.stroke()});
   x.fillStyle='#B6F23C';x.beginPath();x.arc(bp[0],bp[1],3.5+1.5*Math.sin(clock*8),0,7);x.fill();
-  if(w<520)return;x.font='11px "JetBrains Mono",monospace';x.fillStyle='rgba(147,167,181,.95)';var hx=Math.max(16,w*.05),hy=Math.max(80,h*.13);
+  if(w<520||opt.hud==='0')return;x.font='11px "JetBrains Mono",monospace';x.fillStyle='rgba(147,167,181,.95)';var hx=Math.max(16,w*.05),hy=Math.max(80,h*.13);
   ['LIDAR_TOP   '+LAS+'-CH  10 Hz','EGO SPEED   8.0 m/s','TRACKS      '+actors.length+' OBJ','POINTS/SWP  '+(AZ*LAS/1000).toFixed(1)+'k','AZIMUTH     '+(sweep*57.3).toFixed(0).padStart(3,'0')+'°'].forEach(function(s,i){x.fillText(s,hx,hy+i*16)});
  });
 }
 
 /* ================= HARDWARE: CNC laser cutting a nested sheet ================= */
-var gc=document.getElementById('shop');
-if(gc){
+function laserScene(gc){var opt=gc.dataset;
  var G;function rs2(){G=fit(gc)}rs2();window.addEventListener('resize',rs2);
  var ink='#123466',red='#C2371F';
  function circ(cx,cy,r,n,a0){var p=[];for(var i=0;i<=n;i++){var a=(a0||0)+i/n*Math.PI*2;p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)])}return p}
@@ -95,7 +93,7 @@ if(gc){
   else{var c=tp[state.seg];if(state.rapid){var to=c.pts[0];state.dist+=rapidSpeed*dt;if(state.dist>=Math.hypot(to[0]-state.from[0],to[1]-state.from[1])){state.rapid=false;state.dist=0;pushG('G0 X'+to[0].toFixed(1)+' Y'+to[1].toFixed(1));pushG('M3 S'+(c.outer?'1000':'850')+' ; pierce')}}
    else{state.dist+=cutSpeed*dt;if(state.dist>=c.len){state.done.push(state.seg);pushG('G1 ... F1800 ; '+jobs[c.job].name+(c.outer?' profile':' hole'));pushG('M5');state.from=c.pts[c.pts.length-1];state.seg++;state.dist=0;state.rapid=true;if(state.seg>=tp.length){state.dropT=0;state.seg=tp.length-1;pushG('G0 X0 Y0 ; park')}}}}
   // layout: sheet area
-  var sw=narrow?w*.5:Math.min(w*.62,(h*.36)*300/180),sh=sw*180/300,sx=w-sw-(narrow?14:w*.08),sy=narrow?h*.07:h*.27,k=sw/300;
+  var fill=opt.fill==='1',side=opt.side==='1',sw=side?Math.min(w*.3,(h-90)*300/180):fill?Math.min(w-60,(h-80)*300/180):narrow?w*.5:Math.min(w*.62,(h*.36)*300/180),sh=sw*180/300,sx=side?w-sw-w*.04:fill?(w-sw)/2:w-sw-(narrow?14:w*.08),sy=side?40:fill?24:narrow?h*.07:h*.27,k=sw/300;
   function M(p){return[sx+p[0]*k,sy+p[1]*k]}
   // machine frame & rails
   x.strokeStyle=ink;x.lineWidth=1;x.globalAlpha=.5;x.strokeRect(sx-14,sy-14,sw+28,sh+28);x.globalAlpha=1;
@@ -126,8 +124,9 @@ if(gc){
   x.fillText((state.dropT>=0?'SHEET DONE · UNLOAD':cutting?'LASER ON  '+jobs[cur.job].name:'RAPID')+'   X '+hp[0].toFixed(1)+'  Y '+hp[1].toFixed(1),sx-14,sy+sh+30);
   // progress bar
   x.strokeStyle=ink;x.strokeRect(sx-14,sy+sh+38,sw+28,5);x.fillStyle=red;x.fillRect(sx-14,sy+sh+38,(sw+28)*Math.min(1,cutLen/total),5);
-  if(!narrow){var gx=Math.max(20,w*.07),gy=sy+4;x.fillStyle=ink;x.font='10px "IBM Plex Mono",monospace';x.globalAlpha=.85;x.fillText('NC PROGRAM  sheet_06.nc',gx,gy);x.globalAlpha=.6;gcode.forEach(function(s,i){x.fillText(s.slice(0,22),gx,gy+16+i*14)});x.globalAlpha=1;
+  if(!narrow&&!fill&&!side){var gx=Math.max(20,w*.07),gy=sy+4;x.fillStyle=ink;x.font='10px "IBM Plex Mono",monospace';x.globalAlpha=.85;x.fillText('NC PROGRAM  sheet_06.nc',gx,gy);x.globalAlpha=.6;gcode.forEach(function(s,i){x.fillText(s.slice(0,22),gx,gy+16+i*14)});x.globalAlpha=1;
    x.fillStyle=red;x.fillText('PARTS  '+state.done.filter(function(i){return tp[i].outer}).length+' / '+jobs.length,gx,gy+16+8*14);x.fillText('CUT    '+(cutLen/1000).toFixed(2)+' m',gx,gy+16+9*14)}
  });
 }
+document.querySelectorAll('canvas[data-scene=lidar]').forEach(lidarScene);document.querySelectorAll('canvas[data-scene=laser]').forEach(laserScene);
 })();
