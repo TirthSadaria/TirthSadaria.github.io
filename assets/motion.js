@@ -21,3 +21,10 @@ document.querySelectorAll('.lyt').forEach(function(b){b.addEventListener('click'
 // typed eyebrow
 var ty=document.querySelector('.eyebrow.type');if(ty&&!still){var full=ty.textContent;ty.textContent='';ty.classList.add('typing');var i=0;(function step(){ty.textContent=full.slice(0,++i);if(i<full.length)setTimeout(step,22);else ty.classList.remove('typing')})()}
 })();
+(function(){var b=document.getElementById('bot');if(!b)return;var t=b.querySelector('.bot-t'),full=t.dataset.text,still=window.matchMedia('(prefers-reduced-motion: reduce)').matches,typed=false;
+function seen(v){try{if(v===undefined)return sessionStorage.getItem('botSeen');sessionStorage.setItem('botSeen','1')}catch(e){}}
+function open(){b.classList.add('open');if(typed)return;typed=true;if(still){t.textContent=full;return}t.classList.add('typing');var i=0;(function s(){t.textContent=full.slice(0,++i);if(i<full.length)setTimeout(s,24);else t.classList.remove('typing')})()}
+function close(){b.classList.remove('open');seen(1)}
+b.querySelector('.bot-x').addEventListener('click',close);
+b.querySelector('.bot-fig').addEventListener('click',function(){b.classList.contains('open')?close():open()});
+if(!seen()){setTimeout(open,1800);setTimeout(function(){if(b.classList.contains('open'))close()},14000)}})();
